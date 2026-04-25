@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ceph Object Explorer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="shell-bg"></div>
+<div class="layout">
+  <header class="topbar">
+    <div>
+      <h1>Ceph Object Explorer</h1>
+      <p class="subtitle">Fast prefix-based browsing for large S3-compatible buckets</p>
+    </div>
+    <div class="topbar-actions">
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">Dark mode</button>
+      <div class="session-chip">
+        <span class="chip-label">Session</span>
+        <span id="session-state" class="chip-value">Disconnected</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="statbar">
+    <div class="stat">
+      <span class="stat-label">Bucket</span>
+      <span id="selected-bucket-label" class="stat-value">-</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Prefix</span>
+      <span id="selected-prefix-label" class="stat-value">/</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">Visible Items</span>
+      <span id="visible-count-label" class="stat-value">0</span>
+    </div>
+  </section>
+
+  <div class="workspace">
+    <aside class="sidebar">
+      <form id="connect-form" class="panel">
+        <div class="panel-title-row">
+          <h2>Connection</h2>
+        </div>
+        <label>
+          Endpoint
+          <input id="endpoint" name="endpoint" type="url" placeholder="https://ceph.example.com" required>
+        </label>
+        <label>
+          Access Key
+          <input id="accessKey" name="accessKey" type="text" required autocomplete="off">
+        </label>
+        <label>
+          Secret Key
+          <input id="secretKey" name="secretKey" type="password" required autocomplete="off">
+        </label>
+        <label>
+          Region
+          <input id="region" name="region" type="text" value="us-east-1">
+        </label>
+        <label class="checkbox">
+          <input id="pathStyle" name="pathStyle" type="checkbox" checked>
+          Path-style access
+        </label>
+        <button id="connect-button" type="submit">Connect</button>
+        <p id="status" class="status">Ready to connect.</p>
+      </form>
+
+      <section class="panel">
+        <div class="panel-title-row">
+          <h2>Buckets</h2>
+          <span id="bucket-count" class="badge muted">0</span>
+        </div>
+        <input id="bucket-filter" type="text" placeholder="Filter buckets..." aria-label="Filter buckets">
+        <ul id="bucket-list" class="bucket-list"></ul>
+      </section>
+    </aside>
+
+    <main class="content">
+      <section class="panel">
+        <div class="panel-title-row">
+          <h2>Object Browser</h2>
+          <span id="objects-summary" class="muted-text">Select a bucket to begin.</span>
+        </div>
+        <div class="search-row">
+          <input id="search-input" type="text" placeholder="Search keys in current prefix..." aria-label="Search keys">
+          <span id="search-state" class="muted-text"></span>
+        </div>
+        <div class="nav-toolbar">
+          <div class="nav-buttons">
+            <button id="nav-back" type="button" disabled>Back</button>
+            <button id="nav-forward" type="button" disabled>Forward</button>
+            <button id="nav-up" type="button" disabled>Up</button>
+          </div>
+          <div id="breadcrumb" class="breadcrumb">/</div>
+        </div>
+        <div class="toolbar">
+          <div class="toolbar-buttons">
+            <button id="load-more" type="button" disabled>Load more</button>
+          </div>
+        </div>
+        <div id="table-wrap" class="table-wrap">
+          <table>
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Size</th>
+              <th>Last Modified</th>
+            </tr>
+            </thead>
+            <tbody id="objects-spacer-top"></tbody>
+            <tbody id="objects-body"></tbody>
+            <tbody id="objects-spacer-bottom"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel metadata-panel">
+        <div class="panel-title-row">
+          <h2>Object Details</h2>
+          <span class="badge muted">On demand</span>
+        </div>
+        <p id="selected-object-label" class="muted-text">Select an object to inspect details.</p>
+        <div class="detail-tabs">
+          <button id="tab-meta" data-tab="meta" class="tab-button active" type="button">Metadata</button>
+          <button id="tab-tags" data-tab="tags" class="tab-button" type="button">Tags</button>
+          <button id="tab-content" data-tab="content" class="tab-button" type="button">Content</button>
+        </div>
+        <pre id="details-output">Select an object to inspect details.</pre>
+      </section>
+
+      <section class="panel governance-panel">
+        <div class="panel-title-row">
+          <h2>Governance</h2>
+          <span class="badge muted">Bucket-level</span>
+        </div>
+        <div class="detail-tabs">
+          <button id="gov-tab-lifecycle" data-gov-tab="lifecycle" class="tab-button active" type="button">Lifecycle</button>
+          <button id="gov-tab-policy" data-gov-tab="policy" class="tab-button" type="button">Policy</button>
+        </div>
+        <pre id="governance-output">Select a bucket to load lifecycle/policy details.</pre>
+      </section>
+    </main>
+  </div>
+</div>
+<script src="/app.js" defer></script>
+</body>
+</html>
