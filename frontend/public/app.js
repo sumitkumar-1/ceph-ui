@@ -730,9 +730,15 @@ function renderGovernance() {
   }
 
   if (state.governanceTab === "policy") {
-    governanceOutputEl.textContent = typeof section.data.policy === "string"
-      ? section.data.policy
-      : JSON.stringify(section.data.policy, null, 2);
+    if (typeof section.data.policy === "string") {
+      try {
+        governanceOutputEl.textContent = JSON.stringify(JSON.parse(section.data.policy), null, 2);
+      } catch (_error) {
+        governanceOutputEl.textContent = section.data.policy;
+      }
+    } else {
+      governanceOutputEl.textContent = JSON.stringify(section.data.policy, null, 2);
+    }
     return;
   }
   governanceOutputEl.textContent = JSON.stringify(section.data.rules || [], null, 2);
